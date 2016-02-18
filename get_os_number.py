@@ -3,7 +3,7 @@
 """
 Created on 2016-02-18
 Accept two user arguments and print out the arguments value 
-@author kidist
+@author kidistsg
 """
 
 import argparse
