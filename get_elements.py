@@ -1,7 +1,6 @@
 #!/usr/bin/python
 import sqlite3
 
-db = sqlite3.connect(':memory:')
 db = sqlite3.connect('munkireport-db.sqlite')
 cursor =  db.cursor()
 cursor.execute ("SELECT hostname,serial_number FROM machine")
