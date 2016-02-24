@@ -19,4 +19,4 @@ cursor = db.cursor()
 
 cursor.execute ("SELECT COUNT(*) FROM machine WHERE os_version=?", (args.v,))
 
-print cursor.fetchone()[0],
+print cursor.fetchone()[0]
