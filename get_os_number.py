@@ -9,14 +9,14 @@ import sqlite3
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-v", required = True, help = "os-x version")
-parser.add_argument('-f', default = "munkireport-db.sqlite", help = "filename path")
+parser.add_argument("-v", '--version', required = True, nargs = '*', help = "list of os-x version")
+parser.add_argument('-f', '--filename', default = "munkireport-db.sqlite", help = "filename path")
 
 args = parser.parse_args()
 
-db = sqlite3.connect(args.f)
+db = sqlite3.connect(args.filename)
 cursor = db.cursor()
-
-cursor.execute ("SELECT COUNT(*) FROM machine WHERE os_version=?", (args.v,))
-
-print cursor.fetchone()[0]
+for arg in args.version:
+        print "OS X-versio %s" % arg
+        cursor.execute ("SELECT COUNT(*) FROM machine WHERE os_version=?", (arg,))
+        print cursor.fetchone()[0]
