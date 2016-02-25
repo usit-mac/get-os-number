@@ -5,7 +5,6 @@ Created on 2016-02-25
 Accept two user arguments and print out the arguments value 
 @author kidist
 """
-
 import argparse
 import sqlite3
 
@@ -22,7 +21,6 @@ def unique_version( filename ):
 	db.close()
 
 	lists = []
-
 	for version in all_versions:
 		if version[0] !=0 and version[0]!=None:
 			lists.append(version[0])
