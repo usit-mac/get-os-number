@@ -16,12 +16,14 @@ def unique_versions(filename):
     cursor =  db.cursor()
     cursor.execute ("SELECT DISTINCT os_version FROM machine")
     all_versions = cursor.fetchall()
-	
-    return all_versions
+    tuples_list = []
+    for version in all_versions
+        tuples_list.append(version[0])
     db.close()
+    return tuples_list
 
 def post_to_graphite(metric,value,server='collected-prod02.uio.no',port=2003):
-    timestamp = int(time.time())
+    time stamp = int(time.time())
     message = '%s %s %d' % (value, metric,timestamp)
 
     print 'Resolution.daily.mac.client.os.%s' % message
