@@ -38,7 +38,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     for version in unique_versions(args.filename):
-        if version[0] !=0 and version[0]!=None:
+        if version !=0 and version !=None:
             db = sqlite3.connect(args.filename)
             cursor = db.cursor()
     	    cursor.execute ("SELECT COUNT(*) FROM machine WHERE os_version=?", (version,))
