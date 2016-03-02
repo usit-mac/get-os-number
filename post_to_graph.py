@@ -23,7 +23,7 @@ def unique_versions(filename):
     return tuples_list
 
 def post_to_graphite(metric,value,server='collected-prod02.uio.no',port=2003):
-    time stamp = int(time.time())
+    timestamp = int(time.time())
     message = '%s %s %d' % (value, metric,timestamp)
 
     print 'Resolution.daily.mac.client.os.%s' % message
