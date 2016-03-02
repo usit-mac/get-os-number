@@ -39,7 +39,7 @@ if __name__ == '__main__':
         if version[0] !=0 and version[0]!=None:
             db = sqlite3.connect(args.filename)
             cursor = db.cursor()
-	    cursor.execute ("SELECT COUNT(*) FROM machine WHERE os_version=?", (version[0],))
+    	    cursor.execute ("SELECT COUNT(*) FROM machine WHERE os_version=?", (version[0],))
             totalhost = cursor.fetchone()[0]
             post_to_graphite(totalhost, version)
 	    db.close()
