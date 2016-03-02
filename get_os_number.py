@@ -1,32 +1,42 @@
 #!/usr/bin/python
-
 """
 Created on 2016-02-25
-Accept two user arguments and print out the arguments value 
+
+Can be used to read unqiue OS-versions from a munkireport sqlite database and
+post it to a collectd server.
+
 @author kidist
 """
 import sqlite3
 import socket
 import time
 import argparse
-import platform
 
 def unique_versions(filename):
-    db = sqlite3.connect(filename)
-    cursor =  db.cursor()
-    cursor.execute ("SELECT DISTINCT os_version FROM machine")
-    all_versions = cursor.fetchall()
-    db.close()
+    """
+    Returns all unique OS-version from sqlite database pointed to by filename.
+    """
+    with sqlite3.connect(filename) as db:
+        cursor =  db.cursor()
+        cursor.execute ("SELECT DISTINCT os_version FROM machine")
+        all_versions = cursor.fetchall()
+
     tuples_list = []
+
     for version in all_versions:
-        tuples_list.append(version[0])
+        v = version[0]
+        if v != 0 and v != None:
+            tuples_list.append(v)
+
     return tuples_list
 
-def post_to_graphite(metric,value,server='collected-prod02.uio.no',port=2003):
+def post_to_graphite(metric, value, server='collected-prod02.uio.no', port=2003):
+    """
+    Posts a metric to graphite.
+    """
     timestamp = int(time.time())
-    message = '%s %s %d' % (value, metric,timestamp)
+    message = '%s %s %d' % (value, metric, timestamp)
 
-    print 'Resolution.daily.mac.client.os.%s' % message
     sock = socket.socket()
     sock.connect((server, port))
     sock.sendall(message)
@@ -34,15 +44,31 @@ def post_to_graphite(metric,value,server='collected-prod02.uio.no',port=2003):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-f','--filename', default = "munkireport-db.sqlite", help = "filename path")
+
+    parser.add_argument('-f','--filename', default='munkireport-db.sqlite',
+            help="Path to sqlite database.")
+    parser.add_argument('--post-to-graphite', action='store_true',
+            help="Switch for posting the data to graphite.")
+    parser.add_argument('-v', '--verbose', action='store_true',
+            help='Verbose printing.')
+
     args = parser.parse_args()
 
-    for version in unique_versions(args.filename):
-        if version !=0 and version !=None:
-            db = sqlite3.connect(args.filename)
-            cursor = db.cursor()
-    	    cursor.execute ("SELECT COUNT(*) FROM machine WHERE os_version=?", (version,))
-            totalhost = cursor.fetchone()[0]
-            post_to_graphite(totalhost, version)
-	    db.close()
+    metric_base = 'resolution.daily.mac.clients.os.%s'
 
+    with sqlite3.connect(args.filename) as db:
+        cursor = db.cursor()
+
+        for version in unique_versions(args.filename):
+            cursor.execute ("SELECT COUNT(*) FROM machine WHERE os_version=?", (version,))
+            total_clients = cursor.fetchone()[0]
+
+            if args.post_to_graphite:
+                metric = metric_base % version
+
+                if args.verbose:
+                    print '  Graphite: %s %d' % (metric, total_clients)
+
+                post_to_graphite(metric=metric, value=total_clients)
+
+            print '%s %d' % (version, total_clients)
