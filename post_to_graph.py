@@ -17,7 +17,7 @@ def unique_versions(filename):
     cursor.execute ("SELECT DISTINCT os_version FROM machine")
     all_versions = cursor.fetchall()
     tuples_list = []
-    for version in all_versions
+    for version in all_versions:
         tuples_list.append(version[0])
     db.close()
     return tuples_list
@@ -41,7 +41,7 @@ if __name__ == '__main__':
         if version[0] !=0 and version[0]!=None:
             db = sqlite3.connect(args.filename)
             cursor = db.cursor()
-    	    cursor.execute ("SELECT COUNT(*) FROM machine WHERE os_version=?", (version[0],))
+    	    cursor.execute ("SELECT COUNT(*) FROM machine WHERE os_version=?", (version,))
             totalhost = cursor.fetchone()[0]
             post_to_graphite(totalhost, version)
 	    db.close()
