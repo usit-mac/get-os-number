@@ -10,14 +10,14 @@ post it to a collectd server.
 import pymysql
 import socket
 import time
-import argparse
 
-def unique_versions(filename):
+
+def unique_versions(dbname):
     """
-    Returns all unique OS-version from sqlite database pointed to by filename.
+    Returns all unique OS-version from MySql database 
     """
-    with sqlite3.connect(filename) as db:
-        cursor =  db.cursor()
+    with pymysql.connect(host = 'localhost', user = 'root', db = dbname, passwd = '') as cursor:
+        #cursor =  mysql_db.cursor()
         cursor.execute ("SELECT DISTINCT os_version FROM machine")
         all_versions = cursor.fetchall()
 
@@ -40,26 +40,16 @@ def post_to_graphite(metric, value, server='collected-prod02.uio.no', port=2003)
     sock = socket.socket()
     sock.connect((server, port))
     sock.sendall(message)
-    sock.close()
+#    sock.close()
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument('-f','--filename', default='munkireport-db.sqlite',
-            help="Path to sqlite database.")
-    parser.add_argument('--post-to-graphite', action='store_true',
-            help="Switch for posting the data to graphite.")
-    parser.add_argument('-v', '--verbose', action='store_true',
-            help='Verbose printing.')
-
-    args = parser.parse_args()
 
     metric_base = 'resolution.daily.mac.clients.os.%s'
 
-    with sqlite3.connect(args.filename) as db:
-        cursor = db.cursor()
+    with pymysql.connect(host = 'localhost', user = 'root', db = 'my_database', passwd = '') as cursor:
+        #cursor = mysql_db.cursor()
 
-        for version in unique_versions(args.filename):
+        for version in unique_versions('my_database'):
             cursor.execute ("SELECT COUNT(*) FROM machine WHERE os_version=?", (version,))
             total_clients = cursor.fetchone()[0]
 
@@ -72,3 +62,4 @@ if __name__ == '__main__':
                 post_to_graphite(metric=metric, value=total_clients)
 
             print '%s %d' % (version, total_clients)
+
