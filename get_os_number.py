@@ -7,7 +7,7 @@ post it to a collectd server.
 
 @author kidist
 """
-import sqlite3
+import pymysql
 import socket
 import time
 import argparse
