@@ -68,4 +68,5 @@ if __name__ == '__main__':
 
                 post_to_graphite(metric=metric, value=total_clients)
 
-            print '%s %d' % (version, total_clients)
+            if args.verbose:
+                print '%s %d' % (version, total_clients)
