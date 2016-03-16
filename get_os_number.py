@@ -12,11 +12,11 @@ import socket
 import time
 import argparse
 
-def unique_versions(dbname):
+def unique_versions(args):
     """
     Returns all unique OS-version from MySql database 
     """
-    with pymysql.connect(host = args.hostname, user = args.username, db = dbname, passwd = args.passwd) as cursor:
+    with pymysql.connect(host = args.hostname, user = args.username, db = args.dbname, passwd = args.passwd) as cursor:
         cursor.execute ("SELECT DISTINCT os_version FROM machine")
         all_versions = cursor.fetchall()
 
@@ -54,9 +54,9 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     metric_base = 'resolution.daily.mac.clients.os.%s'
-    
+
     with pymysql.connect(host = args.hostname, user = args.username, db = args.dbname, passwd = args.passwd) as cursor:
-        for version in unique_versions(args.dbname):
+        for version in unique_versions(args):
             cursor.execute ("SELECT COUNT(*) FROM machine WHERE os_version=%s", (version,))
             total_clients = cursor.fetchone()[0]
 
@@ -64,9 +64,8 @@ if __name__ == '__main__':
                 metric = metric_base % version
 
                 if args.verbose:
-	                print '  Graphite: %s %d' % (metric, total_clients)
+                    print '  Graphite: %s %d' % (metric, total_clients)
 
                 post_to_graphite(metric=metric, value=total_clients)
 
             print '%s %d' % (version, total_clients)
-
