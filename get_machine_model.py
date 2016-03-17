@@ -5,7 +5,7 @@ import socket
 import time
 import argparse
 
-def unique_models(arg):
+def unique_models(args):
     """
     Returns all unique Machine-models from MySql database 
     """
@@ -49,7 +49,7 @@ if __name__ == '__main__':
                 if args.verbose:
                     print '  Graphite: %s %d' % (metric, total_clients)
 
-            print post_to_graphite
+            post_to_graphite(metric = metric, value = total_clients)
 
             if args.verbose:
                 print '%s %d' % (model_lower, total_clients)
