@@ -49,7 +49,7 @@ if __name__ == '__main__':
                 if args.verbose:
                     print '  Graphite: %s %d' % (metric, total_clients)
 
-            post_to_graphite(metric = metric, value = total_clients)
+            	post_to_graphite(metric = metric, value = total_clients)
 
             if args.verbose:
                 print '%s %d' % (model_lower, total_clients)
