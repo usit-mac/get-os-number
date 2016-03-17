@@ -41,7 +41,7 @@ if __name__ == '__main__':
         for model in unique_models(args):
             cursor.execute ("SELECT COUNT(*) FROM machine WHERE machine_name=%s", (model,))
             total_clients = cursor.fetchone()[0]
-            model_lower = model.lower()
+            model_lower = model.lower().replace(' ', '-')
 	    
             if args.post_to_graphite:
                 metric = metric_base % model_lower
