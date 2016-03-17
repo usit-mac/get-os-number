@@ -5,7 +5,7 @@ import socket
 import time
 import argparse
 
-def unique_modes(arg):
+def unique_models(arg):
     """
     Returns all unique Machine-models from MySql database 
     """
@@ -13,12 +13,14 @@ def unique_modes(arg):
         cursor.execute ("SELECT DISTINCT machine_name FROM machine")
         all_versions = cursor.fetchall()
 
-    for version in all_versions:
-        v = version[0]
-        if v != 0 and v != None:
-            tuples_list.append(v)
+    	tuples_list = []
 
-    return tuples_list
+	for version in all_versions:
+		v = version[0]
+	        if v != 0 and v != None:
+        	    tuples_list.append(v)
+
+	return tuples_list
 
 
 if __name__ == '__main__':
@@ -36,7 +38,7 @@ if __name__ == '__main__':
     metric_base = 'resolution.daily.mac.clients.os.%s'
 
     with pymysql.connect(host = args.hostname, user = args.username, db = args.dbname, passwd = args.passwd) as cursor:
-        for model in unique_versions(args):
+        for model in unique_models(args):
             cursor.execute ("SELECT COUNT(*) FROM machine WHERE machine_name=%s", (model,))
             total_clients = cursor.fetchone()[0]
             splitted_modeln = '-'.join([str(int(str(model)[i:i+2])) for i in range(0, len(str(model)), 2)])
@@ -47,7 +49,7 @@ if __name__ == '__main__':
                 if args.verbose:
                     print '  Graphite: %s %d' % (metric, total_clients)
 
-               print post_to_graphite
+            print post_to_graphite
 
-           if args.verbose:
+            if args.verbose:
                 print '%s %d' % (splitted_model, total_clients)
