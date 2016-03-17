@@ -24,7 +24,7 @@ if __name__ == '__main__':
         total_clients = cursor.fetchone()[0]
 
         if args.post_to_graphite:
-            metric = metric_base % model_lower
+            metric = metric_base % total_clients
 
             if args.verbose:
                 print '  Graphite: %s %d' % (metric, total_clients)
@@ -32,4 +32,5 @@ if __name__ == '__main__':
                 post_to_graphite(metric = metric, value = total_clients)
 
         if args.verbose:
-                print '%s %d' % (model_lower, total_clients)
+                print '%d' % (total_clients)
+
