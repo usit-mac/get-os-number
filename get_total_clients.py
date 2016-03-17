@@ -20,7 +20,7 @@ if __name__ == '__main__':
     metric_base = 'resolution.daily.mac.total_clients.%s'
 
     with  pymysql.connect(host = args.hostname, user = args.username, db = args.dbname, passwd = args.passwd) as cursor:
-        cursor.execute ("SELECT COUNT(*) FROM machine)
+        cursor.execute ("SELECT COUNT(*) FROM machine")
         total_clients = cursor.fetchone()[0]
 
         if args.post_to_graphite:
