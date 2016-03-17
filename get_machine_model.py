@@ -35,16 +35,16 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    metric_base = 'resolution.daily.mac.clients.os.%s'
+    metric_base = 'resolution.daily.mac.clients.model.%s'
 
     with pymysql.connect(host = args.hostname, user = args.username, db = args.dbname, passwd = args.passwd) as cursor:
         for model in unique_models(args):
             cursor.execute ("SELECT COUNT(*) FROM machine WHERE machine_name=%s", (model,))
             total_clients = cursor.fetchone()[0]
-            splitted_modeln = '-'.join([str(int(str(model)[i:i+2])) for i in range(0, len(str(model)), 2)])
-
+            model_lower = model.lower()
+	    
             if args.post_to_graphite:
-                metric = metric_base % splitted_model
+                metric = metric_base % model_lower
 
                 if args.verbose:
                     print '  Graphite: %s %d' % (metric, total_clients)
@@ -52,4 +52,4 @@ if __name__ == '__main__':
             print post_to_graphite
 
             if args.verbose:
-                print '%s %d' % (splitted_model, total_clients)
+                print '%s %d' % (model_lower, total_clients)
