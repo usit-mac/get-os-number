@@ -34,7 +34,7 @@ def post_to_graphite(metric, value, server='collectd-prod02.uio.no', port=2023):
     Posts a metric to graphite.
     """
     timestamp = int(time.time())
-    message = '%s %s %d' % (value, metric, timestamp)
+    message = '%s %d %d\n' % (metric, value, timestamp)
 
     sock = socket.socket()
     sock.connect((server, port))
@@ -59,9 +59,10 @@ if __name__ == '__main__':
         for version in unique_versions(args):
             cursor.execute ("SELECT COUNT(*) FROM machine WHERE os_version=%s", (version,))
             total_clients = cursor.fetchone()[0]
+            splitted_version = '-'.join([str(int(str(version)[i:i+2])) for i in range(0, len(str(version)), 2)])
 
             if args.post_to_graphite:
-                metric = metric_base % version
+                metric = metric_base % splitted_version
 
                 if args.verbose:
                     print '  Graphite: %s %d' % (metric, total_clients)
@@ -69,4 +70,4 @@ if __name__ == '__main__':
                 post_to_graphite(metric=metric, value=total_clients)
 
             if args.verbose:
-                print '%s %d' % (version, total_clients)
+                print '%s %d' % (splitted_version, total_clients)
