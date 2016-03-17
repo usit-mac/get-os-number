@@ -17,20 +17,17 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    metric_base = 'resolution.daily.mac.total_clients.%s'
-
     with  pymysql.connect(host = args.hostname, user = args.username, db = args.dbname, passwd = args.passwd) as cursor:
         cursor.execute ("SELECT COUNT(*) FROM machine")
         total_clients = cursor.fetchone()[0]
 
         if args.post_to_graphite:
-            metric = metric_base % total_clients
+            metric = 'resolution.daily.mac.clients.total'
 
             if args.verbose:
                 print '  Graphite: %s %d' % (metric, total_clients)
 
-                post_to_graphite(metric = metric, value = total_clients)
+            post_to_graphite(metric = metric, value = total_clients)
 
         if args.verbose:
                 print '%d' % (total_clients)
-
