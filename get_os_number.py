@@ -29,7 +29,7 @@ def unique_versions(args):
 
     return tuples_list
 
-def post_to_graphite(metric, value, server='collectd-prod02.uio.no', port=2023):
+def post_to_graphite(metric, value, server='carbon-input.uio.no', port=2023):
     """
     Posts a metric to graphite.
     """
